@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EditorController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WriterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,28 +27,28 @@ Auth::routes();
 
 
 
+Route::get('/dashboard', [HomeController::class, 'index1'])->name('dashboard');
 
+Route::middleware(['auth', 'user-access:admin'])->prefix("admin")->group(function () {
 
+    Route::resource('/', AdminController::class);
+});
+
+//
 Route::middleware(['auth', 'user-access:user'])->group(function () {
 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::resource('/user', UserController::class);
 });
 
-// Manager Routes
-
-Route::middleware(['auth', 'user-access:admin'])->group(function () {
-
-    Route::resource('/admin', HomeController::class);
-});
-
-// Super Admin Routes
+//
 
 Route::middleware(['auth', 'user-access:writer'])->group(function () {
 
-    Route::resource('/Writer', HomeController::class);
+    Route::resource('/Writer', WriterController::class);
 });
 
+//
 Route::middleware(['auth', 'user-access:editor'])->group(function () {
 
-    Route::resource('/editor', HomeController::class);
+    Route::resource('/editor', EditorController::class);
 });
